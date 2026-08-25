@@ -1,0 +1,19 @@
+node_modules/
+dist/
+dist-ssr/
+.env
+*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Build artifacts
+*.tsbuildinfo
+
+# Testing
+/test-results/
+/playwright-report/
+/coverage/

@@ -1,0 +1,22 @@
+[build]
+  base = "client"
+  publish = "client/dist"
+  command = "npm run build"
+  # Path-filtered builds: skip this site's build entirely unless something
+  # inside client/ actually changed. Without this, Netlify's default
+  # behavior triggers a rebuild on ANY commit to the repo, including
+  # server-only changes -- exactly what the monorepo requirement asks us
+  # to avoid. Paths in this command are relative to the repo root, not
+  # the base directory above, even though it looks like it should be the
+  # other way around.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- client/"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

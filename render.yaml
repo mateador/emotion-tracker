@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: emotion-tracker-api
+    runtime: node
+    plan: free
+    rootDir: server
+    # rootDir already scopes command execution to server/ -- do NOT prefix
+    # the build command with `cd server &&`, that would try to cd into a
+    # server/server/ directory that doesn't exist.
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    # buildFilter paths are always relative to the REPO ROOT, even though
+    # rootDir is set to server/ above -- this is what actually skips a
+    # deploy when only client/ changed. rootDir alone does not do this;
+    # it only affects where commands run, not whether they run.
+    buildFilter:
+      paths:
+        - server/**
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ONESIGNAL_APP_ID
+        sync: false
+      - key: ONESIGNAL_REST_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
