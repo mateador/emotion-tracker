@@ -4,6 +4,7 @@ import cors from 'cors'
 import authRoutes from './routes/auth.js'
 import logsRoutes from './routes/logs.js'
 import userRoutes from './routes/user.js'
+import internalRoutes from './routes/internal.js'
 
 const app = express()
 
@@ -14,6 +15,7 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 app.use('/api/auth', authRoutes)
 app.use('/api/logs', logsRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/internal', internalRoutes)
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000
 app.listen(PORT, () => {
