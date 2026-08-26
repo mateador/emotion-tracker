@@ -1,6 +1,10 @@
 [build]
+  # Once `base` is set, EVERY other path below (publish, etc.) resolves
+  # relative to it, not the repo root -- publish = "dist" here means
+  # client/dist, not a repo-root-relative path. Writing "client/dist" here
+  # would double up to client/client/dist, which doesn't exist.
   base = "client"
-  publish = "client/dist"
+  publish = "dist"
   command = "npm run build"
   # Path-filtered builds: skip this site's build entirely unless something
   # inside client/ actually changed. Without this, Netlify's default
