@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+dev-dist
+*.local
+.env
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.tsbuildinfo
