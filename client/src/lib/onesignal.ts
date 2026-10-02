@@ -64,24 +64,50 @@ function loadSdk(appId: string) {
   })
 }
 
+export type PushState = 'unsupported' | 'default' | 'granted' | 'denied'
+
+export function getPushState(): PushState {
+  if (!import.meta.env.VITE_ONESIGNAL_APP_ID) return 'unsupported'
+  if (typeof Notification === 'undefined') return 'unsupported' // e.g. iOS Safari outside the installed PWA
+  return Notification.permission
+}
+
 /**
- * Call this after a natural point of engagement -- NOT on page load. The
- * emotion-tracking context makes an immediate permission prompt on first
- * visit feel presumptuous; asking right after someone's first successful
- * check-in is a much more legible "why is this app asking me this" moment.
+ * Loads and initializes the SDK without prompting, so it is ready by the
+ * time someone taps "Turn on reminders" -- Safari/iOS can drop the user
+ * gesture if the SDK is still downloading when the prompt is requested.
+ * Also syncs the subscription id for people who already granted.
  */
-export async function requestPushPermission(): Promise<void> {
+export function initPush(): void {
+  const appId = import.meta.env.VITE_ONESIGNAL_APP_ID
+  if (appId) loadSdk(appId)
+}
+
+/**
+ * Call this from a direct tap (the RemindersBanner button) -- NOT on page
+ * load. The emotion-tracking context makes an unprompted permission
+ * request feel presumptuous; an explicit opt-in is a legible "why is this
+ * app asking me this" moment.
+ */
+export async function requestPushPermission(): Promise<PushState> {
   const appId = import.meta.env.VITE_ONESIGNAL_APP_ID
   if (!appId) {
     console.info('[onesignal] VITE_ONESIGNAL_APP_ID not set -- skipping push setup.')
-    return
+    return 'unsupported'
   }
   loadSdk(appId)
 
-  window.OneSignalDeferred = window.OneSignalDeferred || []
-  window.OneSignalDeferred.push(async (OneSignal) => {
-    if (!OneSignal.Notifications.permission) {
-      await OneSignal.Notifications.requestPermission()
-    }
+  await new Promise<void>((resolve) => {
+    window.OneSignalDeferred = window.OneSignalDeferred || []
+    window.OneSignalDeferred.push(async (OneSignal) => {
+      try {
+        if (!OneSignal.Notifications.permission) {
+          await OneSignal.Notifications.requestPermission()
+        }
+      } finally {
+        resolve()
+      }
+    })
   })
+  return getPushState()
 }

@@ -7,7 +7,7 @@ import { LogoutButton } from './components/LogoutButton'
 import { useLogsQuery, useCreateLog } from './hooks/useLogs'
 import { useOfflineSync } from './hooks/useOfflineSync'
 import { exportLogsCsv } from './lib/api-client'
-import { requestPushPermission } from './lib/onesignal'
+import { RemindersBanner } from './components/RemindersBanner'
 
 function AppShell() {
   useOfflineSync()
@@ -16,9 +16,6 @@ function AppShell() {
 
   async function handleLog(payload: LogPayload) {
     await createLog.mutateAsync(payload)
-    // First natural point of engagement -- not on page load. See
-    // lib/onesignal.ts for the reasoning.
-    void requestPushPermission()
   }
 
   async function handleExport(startDate: string, endDate: string) {
@@ -38,6 +35,7 @@ function AppShell() {
         <h1 className="text-xl font-semibold text-text">How are you feeling?</h1>
         <LogoutButton />
       </div>
+      <RemindersBanner />
       <LogFlow onSubmit={handleLog} />
       <div className="mt-8">
         <Dashboard logs={logs} onExport={handleExport} />
