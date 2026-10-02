@@ -3,6 +3,7 @@ import { queryClient } from './lib/query-client'
 import { AuthGate } from './components/AuthGate'
 import { LogFlow, type LogPayload } from './components/LogFlow'
 import { Dashboard } from './components/Dashboard'
+import { LogoutButton } from './components/LogoutButton'
 import { useLogsQuery, useCreateLog } from './hooks/useLogs'
 import { useOfflineSync } from './hooks/useOfflineSync'
 import { exportLogsCsv } from './lib/api-client'
@@ -33,7 +34,10 @@ function AppShell() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-8">
-      <h1 className="mb-6 text-xl font-semibold text-text">How are you feeling?</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-text">How are you feeling?</h1>
+        <LogoutButton />
+      </div>
       <LogFlow onSubmit={handleLog} />
       <div className="mt-8">
         <Dashboard logs={logs} onExport={handleExport} />
